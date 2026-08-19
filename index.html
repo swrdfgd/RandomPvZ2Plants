@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Random Plants vs Zombies 2 Plant Picker</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#07111f;
+    --panel:#10233a;
+    --panel2:#16304f;
+    --line:#2fe6ff;
+    --text:#e9fdff;
+    --muted:#83aab5;
+    --glow:#38f5ff;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Orbitron',sans-serif;
+    background:
+        radial-gradient(circle at top,#17375f 0%,#08111d 45%,#05080d 100%);
+    color:var(--text);
+    overflow-x:hidden;
+}
+
+/* animated grid */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:
+        linear-gradient(rgba(47,230,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(47,230,255,0.05) 1px, transparent 1px);
+
+    background-size:40px 40px;
+
+    animation:gridMove 18s linear infinite;
+
+    pointer-events:none;
+}
+
+@keyframes gridMove{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(40px);
+    }
+}
+
+.container{
+    width:min(1450px,95%);
+    margin:auto;
+    padding:30px 0 70px;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.title{
+    margin:0;
+    font-size:clamp(2rem,5vw,4.5rem);
+    font-weight:700;
+    letter-spacing:2px;
+
+    text-shadow:
+        0 0 10px var(--glow),
+        0 0 30px rgba(56,245,255,0.35);
+}
+
+.subtitle{
+    margin-top:12px;
+    color:var(--muted);
+    font-size:1rem;
+}
+
+.panel{
+    background:
+        linear-gradient(
+            180deg,
+            var(--panel),
+            var(--panel2)
+        );
+
+    border:1px solid rgba(47,230,255,0.22);
+
+    border-radius:30px;
+
+    padding:24px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.35),
+        0 0 15px rgba(56,245,255,0.08);
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+}
+
+label{
+    color:var(--muted);
+    font-size:0.95rem;
+}
+
+input{
+    width:90px;
+    padding:14px;
+    border-radius:18px;
+    border:1px solid rgba(47,230,255,0.22);
+
+    background:#091321;
+
+    color:var(--text);
+
+    font-family:inherit;
+    font-size:1rem;
+
+    outline:none;
+    text-align:center;
+}
+
+input:focus{
+    border-color:var(--line);
+
+    box-shadow:
+        0 0 12px rgba(47,230,255,0.3);
+}
+
+button{
+    border:none;
+    cursor:pointer;
+
+    padding:14px 22px;
+
+    border-radius:18px;
+
+    background:#20e7ff;
+
+    color:#041018;
+
+    font-family:inherit;
+    font-size:0.95rem;
+    font-weight:700;
+
+    transition:0.18s;
+
+    box-shadow:
+        0 0 16px rgba(32,231,255,0.35);
+}
+
+button:hover{
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+    box-shadow:
+        0 0 24px rgba(32,231,255,0.55);
+}
+
+.stats{
+    text-align:center;
+    margin-top:18px;
+    color:var(--muted);
+    font-size:0.92rem;
+}
+
+.grid{
+    margin-top:34px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:22px;
+}
+
+.card{
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(17,35,56,0.96),
+            rgba(9,18,32,0.96)
+        );
+
+    border:
+        1px solid rgba(47,230,255,0.15);
+
+    padding:22px;
+
+    transition:0.22s;
+
+    box-shadow:
+        0 10px 24px rgba(0,0,0,0.35);
+}
+
+.card:hover{
+    transform:
+        translateY(-6px)
+        scale(1.02);
+
+    border-color:
+        rgba(47,230,255,0.45);
+
+    box-shadow:
+        0 15px 36px rgba(0,0,0,0.45),
+        0 0 18px rgba(47,230,255,0.16);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(47,230,255,0.10),
+            transparent 40%
+        );
+
+    pointer-events:none;
+}
+
+.image-wrap{
+    height:170px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card img{
+    max-width:140px;
+    max-height:140px;
+
+    object-fit:contain;
+
+    filter:
+        drop-shadow(0 0 14px rgba(56,245,255,0.35));
+
+    transition:0.2s;
+}
+
+.card:hover img{
+    transform:scale(1.06);
+}
+
+.name{
+    margin-top:18px;
+
+    text-align:center;
+
+    font-size:1rem;
+    line-height:1.5;
+
+    word-break:break-word;
+}
+
+@media(max-width:700px){
+
+    .controls{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+
+    input{
+        width:100%;
+        max-width:180px;
+    }
+
+    .grid{
+        grid-template-columns:
+            repeat(auto-fit,minmax(160px,1fr));
+
+        gap:16px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .image-wrap{
+        height:130px;
+    }
+
+    .card img{
+        max-width:110px;
+        max-height:110px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <section class="hero">
+
+        <h1 class="title">
+            Random Plants vs Zombies 2 Plant Picker
+        </h1>
+
+
+    </section>
+
+    <section class="panel">
+
+        <div class="controls">
+
+            <label>
+                Number of plants
+            </label>
+
+            <input
+                type="number"
+                id="count"
+                value="6"
+                min="1"
+                max="999"
+            >
+
+            <button onclick="generatePlants()">
+                GENERATE
+            </button>
+
+        </div>
+
+        <div class="stats" id="stats">
+            Plant database loaded
+        </div>
+
+    </section>
+
+    <section class="grid" id="grid"></section>
+
+</div>
+
+<script>
+
+/*
+=====================================
+PASTE YOUR SCRAPED DATA HERE
+=====================================
+*/
+
+const plants = [
+    {
+        "name": "A.K.E.E.",
+        "image": "https://plantsvszombies.wiki.gg/images/A.K.E.E.2.png?dd7c52"
+    },
+    {
+        "name": "Ail-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Ail-mint2.png?9676a1"
+    },
+    {
+        "name": "Aloe",
+        "image": "https://plantsvszombies.wiki.gg/images/Aloe2.png?97bdae"
+    },
+    {
+        "name": "Appease-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Appease-mint2.png?62b8e5"
+    },
+    {
+        "name": "Apple Mortar",
+        "image": "https://plantsvszombies.wiki.gg/images/Apple_Mortar2.png?ea8d2e"
+    },
+    {
+        "name": "Aqua Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Aqua_Vine2.png?dfcfc7"
+    },
+    {
+        "name": "Arma-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Arma-mint2.png?624e0e"
+    },
+    {
+        "name": "Bamboo Spartan",
+        "image": "https://plantsvszombies.wiki.gg/images/Bamboo_Spartan2.png?47ae74"
+    },
+    {
+        "name": "Banana Launcher",
+        "image": "https://plantsvszombies.wiki.gg/images/Banana_Launcher2.png?7b39f3"
+    },
+    {
+        "name": "Bean Sprout",
+        "image": "https://plantsvszombies.wiki.gg/images/Bean_Sprout2.png?320ce4"
+    },
+    {
+        "name": "Blast Spinner",
+        "image": "https://plantsvszombies.wiki.gg/images/Blast_Spinner2.png?bb2d4b"
+    },
+    {
+        "name": "Blastberry Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Blastberry_Vine2.png?30e602"
+    },
+    {
+        "name": "Blaze Leaf",
+        "image": "https://plantsvszombies.wiki.gg/images/Blaze_Leaf2.png?ac6ddd"
+    },
+    {
+        "name": "Blazing Knight",
+        "image": "https://plantsvszombies.wiki.gg/images/Blazing_Knight2.png?fb919b"
+    },
+    {
+        "name": "Blockoli",
+        "image": "https://plantsvszombies.wiki.gg/images/Blockoli2.png?78cf4d"
+    },
+    {
+        "name": "Bloomerang",
+        "image": "https://plantsvszombies.wiki.gg/images/Bloomerang2.png?5dec2f"
+    },
+    {
+        "name": "Blooming Heart",
+        "image": "https://plantsvszombies.wiki.gg/images/Blooming_Heart2.png?5c28de"
+    },
+    {
+        "name": "Blover",
+        "image": "https://plantsvszombies.wiki.gg/images/Blover2.png?105935"
+    },
+    {
+        "name": "Boingsetta",
+        "image": "https://plantsvszombies.wiki.gg/images/Boingsetta2.png?ca8b3c"
+    },
+    {
+        "name": "Bombard-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Bombard-mint2.png?5044a7"
+    },
+    {
+        "name": "Bombegranate",
+        "image": "https://plantsvszombies.wiki.gg/images/Bombegranate2.png?8cf195"
+    },
+    {
+        "name": "Bonk Choy",
+        "image": "https://plantsvszombies.wiki.gg/images/Bonk_Choy2.png?776221"
+    },
+    {
+        "name": "Boom Balloon Flower",
+        "image": "https://plantsvszombies.wiki.gg/images/Boom_Balloon_Flower2.png?605630"
+    },
+    {
+        "name": "BoomBerry",
+        "image": "https://plantsvszombies.wiki.gg/images/BoomBerry2.png?6ff9ae"
+    },
+    {
+        "name": "Bowling Bulb",
+        "image": "https://plantsvszombies.wiki.gg/images/Bowling_Bulb2.png?a13a80"
+    },
+    {
+        "name": "Brain Stem",
+        "image": "https://plantsvszombies.wiki.gg/images/Brain_Stem2.png?4a09b3"
+    },
+    {
+        "name": "Bramble Bush",
+        "image": "https://plantsvszombies.wiki.gg/images/Bramble_Bush2.png?562fac"
+    },
+    {
+        "name": "Bud'uh Boom",
+        "image": "https://plantsvszombies.wiki.gg/images/Bud%27uh_Boom2.png?225b04"
+    },
+    {
+        "name": "Bun Chi",
+        "image": "https://plantsvszombies.wiki.gg/images/Bun_Chi2.png?1dac56"
+    },
+    {
+        "name": "Buttercup",
+        "image": "https://plantsvszombies.wiki.gg/images/Buttercup2.png?2c0cd2"
+    },
+    {
+        "name": "Bzzz Button",
+        "image": "https://plantsvszombies.wiki.gg/images/Bzzz_Button2.png?a25625"
+    },
+    {
+        "name": "Cabbage-pult",
+        "image": "https://plantsvszombies.wiki.gg/images/Cabbage-pult2.png?e4b13f"
+    },
+    {
+        "name": "Cactus",
+        "image": "https://plantsvszombies.wiki.gg/images/Cactus2.png?f25ffd"
+    },
+    {
+        "name": "Caulipower",
+        "image": "https://plantsvszombies.wiki.gg/images/Caulipower2.png?b7b08f"
+    },
+    {
+        "name": "Celery Stalker",
+        "image": "https://plantsvszombies.wiki.gg/images/Celery_Stalker2.png?2c9966"
+    },
+    {
+        "name": "Chard Guard",
+        "image": "https://plantsvszombies.wiki.gg/images/Chard_Guard2.png?389315"
+    },
+    {
+        "name": "Cherry Bomb",
+        "image": "https://plantsvszombies.wiki.gg/images/Cherry_Bomb2.png?ac1e71"
+    },
+    {
+        "name": "Chili Bean",
+        "image": "https://plantsvszombies.wiki.gg/images/Chili_Bean2.png?b4f122"
+    },
+    {
+        "name": "Chilly Pepper",
+        "image": "https://plantsvszombies.wiki.gg/images/Chilly_Pepper2.png?290bef"
+    },
+    {
+        "name": "Chomper",
+        "image": "https://plantsvszombies.wiki.gg/images/Chomper2.png?7989cd"
+    },
+    {
+        "name": "Citron",
+        "image": "https://plantsvszombies.wiki.gg/images/Citron2.png?bce512"
+    },
+    {
+        "name": "Coconut Cannon",
+        "image": "https://plantsvszombies.wiki.gg/images/Coconut_Cannon2.png?e5900c"
+    },
+    {
+        "name": "Cold Snapdragon",
+        "image": "https://plantsvszombies.wiki.gg/images/Cold_Snapdragon2.png?1721b2"
+    },
+    {
+        "name": "Conceal-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Conceal-mint2.png?9fd692"
+    },
+    {
+        "name": "Contain-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Contain-mint2.png?cb3eb6"
+    },
+    {
+        "name": "Corn-fetti Popper",
+        "image": "https://plantsvszombies.wiki.gg/images/Corn-fetti_Popper2.png?9a5083"
+    },
+    {
+        "name": "Cran Jelly",
+        "image": "https://plantsvszombies.wiki.gg/images/Cran_Jelly2.png?c6fa2b"
+    },
+    {
+        "name": "Dandelion",
+        "image": "https://plantsvszombies.wiki.gg/images/Dandelion2.png?f6ba16"
+    },
+    {
+        "name": "Dartichoke",
+        "image": "https://plantsvszombies.wiki.gg/images/Dartichoke2.png?e8ba23"
+    },
+    {
+        "name": "Dazey Chain",
+        "image": "https://plantsvszombies.wiki.gg/images/Dazey_Chain2.png?681d4f"
+    },
+    {
+        "name": "Devour Bloom",
+        "image": "https://plantsvszombies.wiki.gg/images/Devour_Bloom2.png?11458b"
+    },
+    {
+        "name": "Doom-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Doom-shroom2.png?60dfe4"
+    },
+    {
+        "name": "Draftodil",
+        "image": "https://plantsvszombies.wiki.gg/images/Draftodil2.png?a01280"
+    },
+    {
+        "name": "Dragon Bruit",
+        "image": "https://plantsvszombies.wiki.gg/images/Dragon_Bruit2.png?fc31d6"
+    },
+    {
+        "name": "Dusk Lobber",
+        "image": "https://plantsvszombies.wiki.gg/images/Dusk_Lobber2.png?d62575"
+    },
+    {
+        "name": "E.M.Peach",
+        "image": "https://plantsvszombies.wiki.gg/images/E.M.Peach2.png?a4d87a"
+    },
+    {
+        "name": "Electric Blueberry",
+        "image": "https://plantsvszombies.wiki.gg/images/Electric_Blueberry2.png?138db7"
+    },
+    {
+        "name": "Electric Currant",
+        "image": "https://plantsvszombies.wiki.gg/images/Electric_Currant2.png?a9f325"
+    },
+    {
+        "name": "Electric Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Electric_Peashooter2.png?b3ce5b"
+    },
+    {
+        "name": "Electric Peel",
+        "image": "https://plantsvszombies.wiki.gg/images/Electric_Peel2.png?308684"
+    },
+    {
+        "name": "Electrici-tea",
+        "image": "https://plantsvszombies.wiki.gg/images/Electrici-tea2.png?6ab346"
+    },
+    {
+        "name": "Enchant-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Enchant-mint2.png?2357f3"
+    },
+    {
+        "name": "Endurian",
+        "image": "https://plantsvszombies.wiki.gg/images/Endurian2.png?eec24e"
+    },
+    {
+        "name": "Enforce-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Enforce-mint2.png?8d60d4"
+    },
+    {
+        "name": "Enlighten-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Enlighten-mint2.png?ceff21"
+    },
+    {
+        "name": "Escape Root",
+        "image": "https://plantsvszombies.wiki.gg/images/Escape_Root2.png?991415"
+    },
+    {
+        "name": "Explode-O-Nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Explode-O-Nut2.png?971521"
+    },
+    {
+        "name": "Explode-o-Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Explode-o-Vine2.png?51ac08"
+    },
+    {
+        "name": "Fila-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Fila-mint2.png?190572"
+    },
+    {
+        "name": "Fire Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Fire_Peashooter2.png?710b50"
+    },
+    {
+        "name": "Frost Bonnet",
+        "image": "https://plantsvszombies.wiki.gg/images/Frost_Bonnet2.png?229c9f"
+    },
+    {
+        "name": "Fume-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Fume-shroom2.png?7aeec5"
+    },
+    {
+        "name": "Garlic",
+        "image": "https://plantsvszombies.wiki.gg/images/Garlic2.png?d5dc94"
+    },
+    {
+        "name": "Ghost Pepper",
+        "image": "https://plantsvszombies.wiki.gg/images/Ghost_Pepper2.png?226e5a"
+    },
+    {
+        "name": "Gloom Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Gloom_Vine2.png?fad1df"
+    },
+    {
+        "name": "Gold Bloom",
+        "image": "https://plantsvszombies.wiki.gg/images/Gold_Bloom2.png?515e9c"
+    },
+    {
+        "name": "Gold Leaf",
+        "image": "https://plantsvszombies.wiki.gg/images/Gold_Leaf2.png?4a0e7d"
+    },
+    {
+        "name": "Goo Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Goo_Peashooter2.png?9f4ed2"
+    },
+    {
+        "name": "Grapeshot",
+        "image": "https://plantsvszombies.wiki.gg/images/Grapeshot2.png?da9b79"
+    },
+    {
+        "name": "Grave Buster",
+        "image": "https://plantsvszombies.wiki.gg/images/Grave_Buster2.png?46b294"
+    },
+    {
+        "name": "Grimrose",
+        "image": "https://plantsvszombies.wiki.gg/images/Grimrose2.png?cb11e5"
+    },
+    {
+        "name": "Guacodile",
+        "image": "https://plantsvszombies.wiki.gg/images/Guacodile2.png?64e6ea"
+    },
+    {
+        "name": "Guard-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Guard-shroom2.png?d7abff"
+    },
+    {
+        "name": "Gumnut",
+        "image": "https://plantsvszombies.wiki.gg/images/Gumnut2.png?fb9d28"
+    },
+    {
+        "name": "Hammeruit",
+        "image": "https://plantsvszombies.wiki.gg/images/Hammeruit2.png?eea0de"
+    },
+    {
+        "name": "Headbutter Lettuce",
+        "image": "https://plantsvszombies.wiki.gg/images/Headbutter_Lettuce2.png?e223fe"
+    },
+    {
+        "name": "Heath Seeker",
+        "image": "https://plantsvszombies.wiki.gg/images/Heath_Seeker2.png?d335a4"
+    },
+    {
+        "name": "Hocus Crocus",
+        "image": "https://plantsvszombies.wiki.gg/images/Hocus_Crocus2.png?2f666b"
+    },
+    {
+        "name": "Holly Barrier",
+        "image": "https://plantsvszombies.wiki.gg/images/Holly_Barrier2.png?795b4d"
+    },
+    {
+        "name": "Homing Thistle",
+        "image": "https://plantsvszombies.wiki.gg/images/Homing_Thistle2.png?2fbce3"
+    },
+    {
+        "name": "Hot Date",
+        "image": "https://plantsvszombies.wiki.gg/images/Hot_Date2.png?d59047"
+    },
+    {
+        "name": "Hot Potato",
+        "image": "https://plantsvszombies.wiki.gg/images/Hot_Potato2.png?baa83f"
+    },
+    {
+        "name": "Hurrikale",
+        "image": "https://plantsvszombies.wiki.gg/images/Hurrikale2.png?e6dd59"
+    },
+    {
+        "name": "Hypno-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Hypno-shroom2.png?52f9d2"
+    },
+    {
+        "name": "Ice Bloom",
+        "image": "https://plantsvszombies.wiki.gg/images/Ice_Bloom2.png?bf8afb"
+    },
+    {
+        "name": "Ice-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Ice-shroom2.png?c0e57d"
+    },
+    {
+        "name": "Iceberg Lettuce",
+        "image": "https://plantsvszombies.wiki.gg/images/Iceberg_Lettuce2.png?3cb53e"
+    },
+    {
+        "name": "Iceweed",
+        "image": "https://plantsvszombies.wiki.gg/images/Iceweed2.png?ea54a1"
+    },
+    {
+        "name": "Imitater",
+        "image": "https://plantsvszombies.wiki.gg/images/Imitater2.png?426671"
+    },
+    {
+        "name": "Imp Pear",
+        "image": "https://plantsvszombies.wiki.gg/images/Imp_Pear2.png?eb931b"
+    },
+    {
+        "name": "Inferno",
+        "image": "https://plantsvszombies.wiki.gg/images/Inferno2.png?7debcb"
+    },
+    {
+        "name": "Infi-nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Infi-nut2.png?274b23"
+    },
+    {
+        "name": "Intensive Carrot",
+        "image": "https://plantsvszombies.wiki.gg/images/Intensive_Carrot2.png?11d7da"
+    },
+    {
+        "name": "Jack O' Lantern",
+        "image": "https://plantsvszombies.wiki.gg/images/Jack_O%27_Lantern2.png?276479"
+    },
+    {
+        "name": "Jalapeno",
+        "image": "https://plantsvszombies.wiki.gg/images/Jalapeno2.png?465754"
+    },
+    {
+        "name": "Kernel-pult",
+        "image": "https://plantsvszombies.wiki.gg/images/Kernel-pult2.png?7324d8"
+    },
+    {
+        "name": "Kiwibeast",
+        "image": "https://plantsvszombies.wiki.gg/images/Kiwibeast2.png?869c54"
+    },
+    {
+        "name": "Laser Bean",
+        "image": "https://plantsvszombies.wiki.gg/images/Laser_Bean2.png?91517a"
+    },
+    {
+        "name": "Lava Guava",
+        "image": "https://plantsvszombies.wiki.gg/images/Lava_Guava2.png?f2022c"
+    },
+    {
+        "name": "Lemonaid",
+        "image": "https://plantsvszombies.wiki.gg/images/Lemonaid2.png?f786eb"
+    },
+    {
+        "name": "Levitater",
+        "image": "https://plantsvszombies.wiki.gg/images/Levitater2.png?2780fb"
+    },
+    {
+        "name": "Lightning Reed",
+        "image": "https://plantsvszombies.wiki.gg/images/Lightning_Reed2.png?39324e"
+    },
+    {
+        "name": "Lily Pad",
+        "image": "https://plantsvszombies.wiki.gg/images/Lily_Pad2.png?3e76ce"
+    },
+    {
+        "name": "Magnet-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Magnet-shroom2.png?374847"
+    },
+    {
+        "name": "Magnifying Grass",
+        "image": "https://plantsvszombies.wiki.gg/images/Magnifying_Grass2.png?846735"
+    },
+    {
+        "name": "Mangofier",
+        "image": "https://plantsvszombies.wiki.gg/images/Mangofier2.png?40900a"
+    },
+    {
+        "name": "MayBee",
+        "image": "https://plantsvszombies.wiki.gg/images/MayBee2.png?5a9e73"
+    },
+    {
+        "name": "Mega Gatling Pea",
+        "image": "https://plantsvszombies.wiki.gg/images/Mega_Gatling_Pea2.png?7e71a3"
+    },
+    {
+        "name": "Melon-pult",
+        "image": "https://plantsvszombies.wiki.gg/images/Melon-pult2.png?1ec8eb"
+    },
+    {
+        "name": "Meteor Flower",
+        "image": "https://plantsvszombies.wiki.gg/images/Meteor_Flower2.png?c9afef"
+    },
+    {
+        "name": "Missile Toe",
+        "image": "https://plantsvszombies.wiki.gg/images/Missile_Toe2.png?f746ca"
+    },
+    {
+        "name": "Moonflower",
+        "image": "https://plantsvszombies.wiki.gg/images/Moonflower2.png?44b6dd"
+    },
+    {
+        "name": "Murkadamia Nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Murkadamia_Nut2.png?d68102"
+    },
+    {
+        "name": "Nightcap",
+        "image": "https://plantsvszombies.wiki.gg/images/Nightcap2.png?5f0d17"
+    },
+    {
+        "name": "Nightshade",
+        "image": "https://plantsvszombies.wiki.gg/images/Nightshade2.png?238345"
+    },
+    {
+        "name": "Noctarine",
+        "image": "https://plantsvszombies.wiki.gg/images/Noctarine2.png?d18cce"
+    },
+    {
+        "name": "Olive Pit",
+        "image": "https://plantsvszombies.wiki.gg/images/Olive_Pit2.png?b36186"
+    },
+    {
+        "name": "Parsnip",
+        "image": "https://plantsvszombies.wiki.gg/images/Parsnip2.png?fe3431"
+    },
+    {
+        "name": "Pea Pod",
+        "image": "https://plantsvszombies.wiki.gg/images/Pea_Pod2.png?bd4f81"
+    },
+    {
+        "name": "Pea Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Pea_Vine2.png?5de162"
+    },
+    {
+        "name": "Pea-nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Pea-nut2.png?7d3b47"
+    },
+    {
+        "name": "Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Peashooter2.png?8b558b"
+    },
+    {
+        "name": "Pepper-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Pepper-mint2.png?5ac2ab"
+    },
+    {
+        "name": "Pepper-pult",
+        "image": "https://plantsvszombies.wiki.gg/images/Pepper-pult2.png?6272f9"
+    },
+    {
+        "name": "Perfume-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Perfume-shroom2.png?74f897"
+    },
+    {
+        "name": "Phat Beet",
+        "image": "https://plantsvszombies.wiki.gg/images/Phat_Beet2.png?ba768a"
+    },
+    {
+        "name": "Pokra",
+        "image": "https://plantsvszombies.wiki.gg/images/Pokra2.png?ec830e"
+    },
+    {
+        "name": "Potato Mine",
+        "image": "https://plantsvszombies.wiki.gg/images/Potato_Mine2.png?e15a8e"
+    },
+    {
+        "name": "Power Lily",
+        "image": "https://plantsvszombies.wiki.gg/images/Power_Lily2.png?872d03"
+    },
+    {
+        "name": "Power Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Power_Vine2.png?244057"
+    },
+    {
+        "name": "Primal Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Primal_Peashooter2.png?448437"
+    },
+    {
+        "name": "Primal Potato Mine",
+        "image": "https://plantsvszombies.wiki.gg/images/Primal_Potato_Mine2.png?4baf3d"
+    },
+    {
+        "name": "Primal Sunflower",
+        "image": "https://plantsvszombies.wiki.gg/images/Primal_Sunflower2.png?1f933b"
+    },
+    {
+        "name": "Primal Wall-nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Primal_Wall-nut2.png?1c1b1e"
+    },
+    {
+        "name": "Puff-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Puff-shroom2.png?1634f3"
+    },
+    {
+        "name": "Puffball",
+        "image": "https://plantsvszombies.wiki.gg/images/Puffball2.png?2ffcf6"
+    },
+    {
+        "name": "Pumpkin",
+        "image": "https://plantsvszombies.wiki.gg/images/Pumpkin2.png?f4ccba"
+    },
+    {
+        "name": "Pyre Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Pyre_Vine2.png?1a127b"
+    },
+    {
+        "name": "Red Stinger",
+        "image": "https://plantsvszombies.wiki.gg/images/Red_Stinger2.png?9a0287"
+    },
+    {
+        "name": "Reinforce-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Reinforce-mint2.png?223f32"
+    },
+    {
+        "name": "Repeater",
+        "image": "https://plantsvszombies.wiki.gg/images/Repeater2.png?8c4cd2"
+    },
+    {
+        "name": "Rhubarbarian",
+        "image": "https://plantsvszombies.wiki.gg/images/Rhubarbarian2.png?e072ab"
+    },
+    {
+        "name": "Rose",
+        "image": "https://plantsvszombies.wiki.gg/images/Rose2.png?a884e2"
+    },
+    {
+        "name": "Rotobaga",
+        "image": "https://plantsvszombies.wiki.gg/images/Rotobaga2.png?8d57d4"
+    },
+    {
+        "name": "Sakura",
+        "image": "https://plantsvszombies.wiki.gg/images/Sakura2.png?916438"
+    },
+    {
+        "name": "Sap-fling",
+        "image": "https://plantsvszombies.wiki.gg/images/Sap-fling2.png?94276f"
+    },
+    {
+        "name": "Scaredy-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Scaredy-shroom2.png?76a35d"
+    },
+    {
+        "name": "Sea-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Sea-shroom2.png?ca7847"
+    },
+    {
+        "name": "SeaFlora",
+        "image": "https://plantsvszombies.wiki.gg/images/SeaFlora2.png?100e0a"
+    },
+    {
+        "name": "Seashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Seashooter2.png?d4ddf0"
+    },
+    {
+        "name": "Shadow Peashooter",
+        "image": "https://plantsvszombies.wiki.gg/images/Shadow_Peashooter2.png?cf9aea"
+    },
+    {
+        "name": "Shadow-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Shadow-shroom2.png?d6a49a"
+    },
+    {
+        "name": "Shine Vine",
+        "image": "https://plantsvszombies.wiki.gg/images/Shine_Vine2.png?2245e1"
+    },
+    {
+        "name": "Shrinking Violet",
+        "image": "https://plantsvszombies.wiki.gg/images/Shrinking_Violet2.png?dbeb1b"
+    },
+    {
+        "name": "Sling Pea",
+        "image": "https://plantsvszombies.wiki.gg/images/Sling_Pea2.png?d81ba0"
+    },
+    {
+        "name": "Snap Pea",
+        "image": "https://plantsvszombies.wiki.gg/images/Snap_Pea2.png?53e0d0"
+    },
+    {
+        "name": "Snapdragon",
+        "image": "https://plantsvszombies.wiki.gg/images/Snapdragon2.png?66fc29"
+    },
+    {
+        "name": "Snow Pea",
+        "image": "https://plantsvszombies.wiki.gg/images/Snow_Pea2.png?fdac5e"
+    },
+    {
+        "name": "Solar Sage",
+        "image": "https://plantsvszombies.wiki.gg/images/Solar_Sage2.png?933c38"
+    },
+    {
+        "name": "Solar Tomato",
+        "image": "https://plantsvszombies.wiki.gg/images/Solar_Tomato2.png?a25b1c"
+    },
+    {
+        "name": "Sour Shot",
+        "image": "https://plantsvszombies.wiki.gg/images/Sour_Shot2.png?dadab3"
+    },
+    {
+        "name": "Spear-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Spear-mint2.png?b2d935"
+    },
+    {
+        "name": "Spikerock",
+        "image": "https://plantsvszombies.wiki.gg/images/Spikerock2.png?d180a3"
+    },
+    {
+        "name": "Spikeweed",
+        "image": "https://plantsvszombies.wiki.gg/images/Spikeweed2.png?3e13d0"
+    },
+    {
+        "name": "Split Pea",
+        "image": "https://plantsvszombies.wiki.gg/images/Split_Pea2.png?aadd10"
+    },
+    {
+        "name": "Spore-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Spore-shroom2.png?1d8796"
+    },
+    {
+        "name": "Spring Bean",
+        "image": "https://plantsvszombies.wiki.gg/images/Spring_Bean2.png?3d7a54"
+    },
+    {
+        "name": "Squash",
+        "image": "https://plantsvszombies.wiki.gg/images/Squash2.png?a91575"
+    },
+    {
+        "name": "Stallia",
+        "image": "https://plantsvszombies.wiki.gg/images/Stallia2.png?63388e"
+    },
+    {
+        "name": "Starfruit",
+        "image": "https://plantsvszombies.wiki.gg/images/Starfruit2.png?c5d1d5"
+    },
+    {
+        "name": "Stickybomb Rice",
+        "image": "https://plantsvszombies.wiki.gg/images/Stickybomb_Rice2.png?cd59ad"
+    },
+    {
+        "name": "Strawburst",
+        "image": "https://plantsvszombies.wiki.gg/images/Strawburst2.png?e3674f"
+    },
+    {
+        "name": "Stunion",
+        "image": "https://plantsvszombies.wiki.gg/images/Stunion2.png?5b553b"
+    },
+    {
+        "name": "Sun Bean",
+        "image": "https://plantsvszombies.wiki.gg/images/Sun_Bean2.png?ea0c88"
+    },
+    {
+        "name": "Sun-shroom",
+        "image": "https://plantsvszombies.wiki.gg/images/Sun-shroom2.png?5437ae"
+    },
+    {
+        "name": "Sundew Tangler",
+        "image": "https://plantsvszombies.wiki.gg/images/Sundew_Tangler2.png?c940b5"
+    },
+    {
+        "name": "Sunflower",
+        "image": "https://plantsvszombies.wiki.gg/images/Sunflower2.png?68eb9a"
+    },
+    {
+        "name": "Sweet Potato",
+        "image": "https://plantsvszombies.wiki.gg/images/Sweet_Potato2.png?aec1b8"
+    },
+    {
+        "name": "Sweetheart Snare",
+        "image": "https://plantsvszombies.wiki.gg/images/Sweetheart_Snare2.png?377d5c"
+    },
+    {
+        "name": "Tall-nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Tall-nut2.png?71e185"
+    },
+    {
+        "name": "Tangle Kelp",
+        "image": "https://plantsvszombies.wiki.gg/images/Tangle_Kelp2.png?64479d"
+    },
+    {
+        "name": "Teleportato Mine",
+        "image": "https://plantsvszombies.wiki.gg/images/Teleportato_Mine2.png?ebb275"
+    },
+    {
+        "name": "Thorn Whip",
+        "image": "https://plantsvszombies.wiki.gg/images/Thorn_Whip2.png?2669a1"
+    },
+    {
+        "name": "Threepeater",
+        "image": "https://plantsvszombies.wiki.gg/images/Threepeater2.png?3e07f5"
+    },
+    {
+        "name": "Thyme Warp",
+        "image": "https://plantsvszombies.wiki.gg/images/Thyme_Warp2.png?3f8ff6"
+    },
+    {
+        "name": "Tiger Grass",
+        "image": "https://plantsvszombies.wiki.gg/images/Tiger_Grass2.png?6f3c42"
+    },
+    {
+        "name": "Tile Turnip",
+        "image": "https://plantsvszombies.wiki.gg/images/Tile_Turnip2.png?626b86"
+    },
+    {
+        "name": "Toadstool",
+        "image": "https://plantsvszombies.wiki.gg/images/Toadstool2.png?897407"
+    },
+    {
+        "name": "Tomb Tangler",
+        "image": "https://plantsvszombies.wiki.gg/images/Tomb_Tangler2.png?d31164"
+    },
+    {
+        "name": "Torchwood",
+        "image": "https://plantsvszombies.wiki.gg/images/Torchwood2.png?44da83"
+    },
+    {
+        "name": "Tumbleweed",
+        "image": "https://plantsvszombies.wiki.gg/images/Tumbleweed2.png?801ddc"
+    },
+    {
+        "name": "Turkey-pult",
+        "image": "https://plantsvszombies.wiki.gg/images/Turkey-pult2.png?60ab4f"
+    },
+    {
+        "name": "Twin Sunflower",
+        "image": "https://plantsvszombies.wiki.gg/images/Twin_Sunflower2.png?3516d2"
+    },
+    {
+        "name": "Ultomato",
+        "image": "https://plantsvszombies.wiki.gg/images/Ultomato2.png?d37112"
+    },
+    {
+        "name": "Vamporcini",
+        "image": "https://plantsvszombies.wiki.gg/images/Vamporcini2.png?25adb0"
+    },
+    {
+        "name": "Volt Snapdragon",
+        "image": "https://plantsvszombies.wiki.gg/images/Volt_Snapdragon2.png?bf65b6"
+    },
+    {
+        "name": "Wall-nut",
+        "image": "https://plantsvszombies.wiki.gg/images/Wall-nut2.png?4dde30"
+    },
+    {
+        "name": "Wasabi Whip",
+        "image": "https://plantsvszombies.wiki.gg/images/Wasabi_Whip2.png?b626f1"
+    },
+    {
+        "name": "Winter Melon",
+        "image": "https://plantsvszombies.wiki.gg/images/Winter_Melon2.png?f94dfd"
+    },
+    {
+        "name": "Winter-mint",
+        "image": "https://plantsvszombies.wiki.gg/images/Winter-mint2.png?8cc814"
+    },
+    {
+        "name": "Witch Hazel",
+        "image": "https://plantsvszombies.wiki.gg/images/Witch_Hazel2.png?cbbeee"
+    },
+    {
+        "name": "Znake Lily",
+        "image": "https://plantsvszombies.wiki.gg/images/Znake_Lily2.png?45a930"
+    },
+    {
+        "name": "Zoybean Pod",
+        "image": "https://plantsvszombies.wiki.gg/images/Zoybean_Pod2.png?739401"
+    }
+];
+
+/*
+=====================================
+GENERATOR
+=====================================
+*/
+
+const grid =
+document.getElementById("grid");
+
+const stats =
+document.getElementById("stats");
+
+stats.innerHTML =
+`${plants.length} plants in database`;
+
+function shuffle(array){
+
+    for(
+        let i=array.length-1;
+        i>0;
+        i--
+    ){
+
+        const j =
+        Math.floor(
+            Math.random()*(i+1)
+        );
+
+        [array[i],array[j]] =
+        [array[j],array[i]];
+    }
+
+    return array;
+}
+
+function generatePlants(){
+
+    if(plants.length===0)
+        return;
+
+    const count =
+    parseInt(
+        document.getElementById("count").value
+    );
+
+    const shuffled =
+    shuffle([...plants]);
+
+    const selected =
+    shuffled.slice(
+        0,
+        Math.min(count,plants.length)
+    );
+
+    grid.innerHTML = "";
+
+    selected.forEach(plant=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML =
+        `
+        <div class="image-wrap">
+
+            <img
+                src="${plant.image}"
+                alt="${plant.name}"
+                loading="lazy"
+            >
+
+        </div>
+
+        <div class="name">
+            ${plant.name}
+        </div>
+        `;
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+generatePlants();
+
+</script>
+
+</body>
+</html>
